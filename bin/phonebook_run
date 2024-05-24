@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# phonebook_run
+#
+# Stop on errors
+set -Eeuxo pipefail
+
+if [ ! -f "var/phonebook.sqlite3" ] ; then
+        echo "Error: can't find database var/phonebook.sqlite3"
+        echo "Try: ./bin/phonebook_db create"
+        exit 1
+
+else
+    flask --app PhoneBook --debug run --host 0.0.0.0 --port 8000
+fi
