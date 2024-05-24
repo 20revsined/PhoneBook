@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+
+    <body>
+        <h2>Welcome to the PhoneBook! Please login or create an account.</h2>
+
+        <form action = "{{url_for('check_credentials')}}" method = "post" enctype = "multipart/form-data">
+            <label>Username</label>
+            <input type = "text" name = "username" required>
+            <br>
+            <label>Password</label>
+            <input type = "password" name = "password" required>
+            <br>
+            <input type = "submit" value = "Login">
+        </form>
+
+        <a href = "{{url_for('create_account_page')}}">Create Account</a>
+
+        {% if message %}
+            <p>Incorrect username or password.</p>
+        {% endif %}
+    </body>
+</html>
