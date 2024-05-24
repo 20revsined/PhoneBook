@@ -20,6 +20,13 @@ def login_screen():
         context = {"message": False}
         return flask.render_template("login_page.html", **context)
 
+@PhoneBook.app.route("/logout", methods = ["GET"])
+def logout():
+    """Logs out the current user and returns them to the login page."""
+
+    del flask.session["logged_in_user"]
+    return flask.redirect(flask.url_for("login_screen"))
+
 @PhoneBook.app.route("/check_credentials", methods = ["POST"])
 def check_credentials():
     """
@@ -28,14 +35,14 @@ def check_credentials():
     """
 
     database = PhoneBook.model.get_db()
-    context = {"message": False}
+    context = {}
     username = flask.request.form.get("username")
     password = flask.request.form.get("password")
 
     username_exists = database.execute("SELECT username FROM users WHERE username = ?", (username,)).fetchone()
     if username_exists is None:
-        context["message"] = True
-        return flask.render_template("login_page.html", **context)
+        flask.flash("Incorrect username or password.")
+        return flask.redirect(flask.url_for("login_screen"))
 
     else:
         correct_password = database.execute("SELECT password FROM users WHERE username = ?", (username,)).fetchone()
@@ -54,8 +61,8 @@ def check_credentials():
             return flask.redirect(flask.url_for("main_page"))
         
         else:
-            context["message"] = True
-            return flask.render_template("login_page.html", **context)
+            flask.flash("Incorrect username or password.", category = "message")
+            return flask.redirect(flask.url_for("login_screen"))
 
 
 @PhoneBook.app.route("/create_account", methods = ["GET"])
@@ -82,11 +89,13 @@ def create_user_account():
     username_exists = database.execute("SELECT username FROM users WHERE username = ?", (username,)).fetchone()
 
     if username_exists is not None:
+        flask.flash("This user already exists.")
         context["username"] = username
-        return flask.render_template("user_already_exists.html", **context)
+        return flask.redirect(flask.url_for("create_account_page"))
 
     elif password != confirm_password:
-        return flask.render_template(flask.url_for("create_account_page"), **context)
+        flask.flash("Password and confirm password do not match.")
+        return flask.redirect(flask.url_for("create_account_page"))
     
     else:
         salt = uuid.uuid4().hex
