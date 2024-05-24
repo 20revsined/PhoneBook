@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# phonebook_db
+#
+# Stop on errors
+set -Eeuxo pipefail
+
+# Sanity check command line options
+usage() {
+  echo "Usage: $0 (create|delete|reset)"
+}
+
+#check if directory already exists
+if [ $# -ne 1 ]; then
+  usage
+  exit 1
+fi
+
+# Parse argument. $1 is the first argument
+case $1 in
+  "create")
+    if [ -f "var/phonebook.sqlite3" ] ; then
+        echo "Error: This database already exists"
+        exit 1
+    
+    else
+        sqlite3 var/phonebook.sqlite3 < sql/schema.sql
+    fi
+    ;;
+
+  "delete")
+    rm -rf var/phonebook.sqlite3
+    ;;
+
+  "reset")
+    rm -rf var/phonebook.sqlite3
+    sqlite3 var/phonebook.sqlite3 < sql/schema.sql
+    ;;
+  *)
+    usage
+    exit 1
+    ;;
+esac
