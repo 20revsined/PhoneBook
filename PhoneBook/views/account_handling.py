@@ -14,7 +14,7 @@ def login_screen():
     """
 
     if "logged_in_user" in flask.session:
-        return flask.redirect(flask.url_for("main_page"), **context)
+        return flask.redirect(flask.url_for("main_page"))
     
     else:
         context = {}
@@ -106,4 +106,5 @@ def create_user_account():
         password_db_value = "$".join(["sha256", salt, password_hash])
 
         database.execute("INSERT INTO users(username, password) VALUES (?, ?)", (username, password_db_value))
+        flask.flash("Account successfully created! Please login.")
         return flask.redirect(flask.url_for("login_screen"))
