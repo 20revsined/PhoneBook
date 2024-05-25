@@ -7,11 +7,17 @@
             <p>No contacts to display.</p>
         {% else %}
             {% for contact in contacts %}
-                <p>Name: {{contact["name"]}}</p>
+            <img src="{{url_for('return_profile_picture', filename = contact['profile_picture'])}}" alt="contact profile picture">
+                <p>First Name: {{contact["first_name"]}}</p>
+                <p>Last Name: {{contact["last_name"]}}</p>
                 <p>Phone Number: {{contact["phone_number"]}}</p>
                 <p>Email Address: {{contact["email_address"]}}</p>
                 <p>Home Address: {{contact["home_address"]}}</p>
             {% endfor %}
         {% endif %}
+
+        <form action = "{{url_for('main_page')}}" action = "get">
+            <input type = "Submit" value = "Done">
+        </form>
     </body>
 </html>
