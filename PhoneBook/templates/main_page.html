@@ -5,7 +5,28 @@
     </head>
 
     <body>
+        <p>Welcome, {{logged_in_user}}!</p>
         <a href = "{{url_for('logout')}}">Logout</a>
-        <p>This is the main page.</p>
+        
+        <p>What would you like to do?</p>
+        <form action = "{{url_for('operation')}}" action = "post" enctype = "multipart/form-data">
+            <label>Create Contact Entry</label>
+            <input type = "radio" id = "option1" name = "selection" value = "create">
+            <br>
+
+            <label>Update Contact Entry</label>
+            <input type = "radio" id = "option2" name = "selection" value = "update">
+            <br>
+
+            <label>Delete Contact Entry</label>
+            <input type = "radio" id = "option3" name = "selection" value = "delete">
+            <br>
+
+            <label>View Contact Entry</label>
+            <input type = "radio" id = "option4" name = "selection" value = "view">
+            <br>
+
+            <input type = "submit" value = "Go">
+        </form>
     </body>
 </html>
