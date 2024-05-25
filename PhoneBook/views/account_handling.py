@@ -14,10 +14,10 @@ def login_screen():
     """
 
     if "logged_in_user" in flask.session:
-        return flask.redirect(flask.url_for("main_page"))
+        return flask.redirect(flask.url_for("main_page"), **context)
     
     else:
-        context = {"message": False}
+        context = {}
         return flask.render_template("login_page.html", **context)
 
 @PhoneBook.app.route("/logout", methods = ["GET"])
