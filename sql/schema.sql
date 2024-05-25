@@ -9,7 +9,9 @@ CREATE TABLE users (
 CREATE TABLE contacts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     contact_owner VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    profile_picture VARCHAR(255) NOT NULL,
     phone_number VARCHAR(255) NOT NULL,
     email_address VARCHAR(255) NOT NULL,
     home_address VARCHAR(255) NOT NULL,
