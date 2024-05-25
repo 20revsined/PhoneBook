@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <title>Contacts List</title>
+
+    <body>
+        {% if num_contacts == 0 %}
+            <p>No contacts to display.</p>
+        {% else %}
+            {% for contact in contacts %}
+                <p>Name: {{contact["name"]}}</p>
+                <p>Phone Number: {{contact["phone_number"]}}</p>
+                <p>Email Address: {{contact["email_address"]}}</p>
+                <p>Home Address: {{contact["home_address"]}}</p>
+            {% endfor %}
+        {% endif %}
+    </body>
+</html>
