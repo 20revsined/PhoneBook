@@ -17,7 +17,7 @@ def save_file(fileobj, filename):
 @PhoneBook.app.route("/uploads/<path:filename>", methods = ["GET"])
 def return_profile_picture(filename):
     """Attempts to return the profile_picture of a given contact."""
-    if "logged_in_user" not in flask.session:
+    if "logged_in_user" not in flask.session and filename != "phonebook_icon.png":
         return flask.redirect(flask.url_for("login_screen"))
     
     else:
@@ -178,17 +178,17 @@ def update_contact():
 
         contact_info_changed = False
 
-        if new_first_name is not None:
+        if new_first_name is not None and new_first_name != "":
             database.execute("UPDATE contacts SET first_name = ? WHERE contact_owner = ? AND id = ?",
                              (new_first_name, flask.session["logged_in_user"], contact_exists["id"]))
             contact_info_changed = True
         
-        if new_last_name is not None:
+        if new_last_name is not None and new_last_name != "":
             database.execute("UPDATE contacts SET last_name = ? WHERE contact_owner = ? AND id = ?",
                              (new_last_name, flask.session["logged_in_user"], contact_exists["id"]))
             contact_info_changed = True
 
-        if new_profile_picture is not None:
+        if new_profile_picture is not None and new_profile_picture.filename != "":
             old_profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
                                     (flask.session["logged_in_user"], contact_exists["id"])).fetchone()
 
@@ -201,17 +201,17 @@ def update_contact():
             
             contact_info_changed = True
 
-        if new_phone_number is not None:
+        if new_phone_number is not None and new_phone_number != "":
             database.execute("UPDATE contacts SET phone_number = ? WHERE contact_owner = ? AND id = ?",
                              (new_phone_number, flask.session["logged_in_user"], contact_exists["id"]))
             contact_info_changed = True
 
-        if new_email_address is not None:
+        if new_email_address is not None and new_email_address != "":
             database.execute("UPDATE contacts SET email_address = ? WHERE contact_owner = ? AND id = ?",
                              (new_email_address, flask.session["logged_in_user"], contact_exists["id"]))
             contact_info_changed = True
 
-        if new_home_address is not None:
+        if new_home_address is not None and new_home_address != "":
             database.execute("UPDATE contacts SET home_address = ? WHERE contact_owner = ? AND id = ?",
                              (new_home_address, flask.session["logged_in_user"], contact_exists["id"]))
             contact_info_changed = True
