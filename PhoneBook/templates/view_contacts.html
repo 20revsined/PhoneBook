@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
-    <title>Contacts List</title>
+    <head>
+        <title>Contacts List</title>
+        <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+    </head>
 
     <body>
         {% if num_contacts == 0 %}
