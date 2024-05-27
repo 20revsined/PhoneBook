@@ -3,10 +3,11 @@
     <head>
         <title>Contacts Overview</title>
         <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/main_page_style.css')}}">
     </head>
 
     <body>
-        <p>Welcome, {{logged_in_user}}!</p>
+        <h2>Welcome, {{logged_in_user}}!</h2>
         <a href = "{{url_for('logout')}}">Logout</a>
 
         {% with messages = get_flashed_messages() %}
@@ -20,19 +21,19 @@
         <p>What would you like to do?</p>
         <form action = "{{url_for('operation')}}" method = "post" enctype = "multipart/form-data">
             <label>Create a Contact</label>
-            <input type = "radio" id = "option1" name = "selection" value = "create">
+            <input type = "radio" id = "option1" name = "selection" value = "create" required>
             <br>
 
             <label>Update a Contact</label>
-            <input type = "radio" id = "option2" name = "selection" value = "update">
+            <input type = "radio" id = "option2" name = "selection" value = "update" required>
             <br>
 
             <label>Delete a Contact</label>
-            <input type = "radio" id = "option3" name = "selection" value = "delete">
+            <input type = "radio" id = "option3" name = "selection" value = "delete" required>
             <br>
 
             <label>View Contacts</label>
-            <input type = "radio" id = "option4" name = "selection" value = "view">
+            <input type = "radio" id = "option4" name = "selection" value = "view" required>
             <br>
 
             <input type = "submit" value = "Go">
