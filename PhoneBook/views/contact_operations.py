@@ -1,3 +1,8 @@
+"""
+This file allows users to create new contacts, update contacts,
+delete a contact, and view all of their contacts.
+"""
+
 import flask
 import PhoneBook
 import uuid
@@ -5,7 +10,10 @@ import pathlib
 import os
 
 def save_file(fileobj, filename):
-    """Generates a unique filename to save a user's profile picture in the database."""
+    """
+    Generates a unique filename to save a user's profile picture in the database.
+    """
+
     stem = uuid.uuid4().hex
     suffix = pathlib.Path(filename).suffix.lower()
     new_file_name = f"{stem}{suffix}"
@@ -16,8 +24,12 @@ def save_file(fileobj, filename):
 
 @PhoneBook.app.route("/uploads/<path:filename>", methods = ["GET"])
 def return_profile_picture(filename):
-    """Attempts to return the profile_picture of a given contact."""
+    """
+    Attempts to return the profile_picture of a given contact.
+    """
+
     if "logged_in_user" not in flask.session and filename != "phonebook_icon.png":
+        flask.flash("You must be logged in to perform that functionality.")
         return flask.redirect(flask.url_for("login_screen"))
     
     else:
@@ -29,9 +41,12 @@ def return_profile_picture(filename):
 
 @PhoneBook.app.route("/main", methods = ["GET"])
 def main_page():
-    """This returns the UI that the user sees after logging in."""
+    """
+    This returns the UI that the user sees after logging in.
+    """
 
     if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to view that page.")
         return flask.redirect(flask.url_for("login_screen"))
     
     else:
@@ -40,10 +55,13 @@ def main_page():
     
 @PhoneBook.app.route("/operation", methods = ["POST"])
 def operation():
-    """This function returns the appropriate page based on
-    what the user wants to do."""
+    """
+    This function returns the appropriate page based
+    on what the user wants to do.
+    """
 
     if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
         return flask.redirect(flask.url_for("login_screen"))
 
     decision = flask.request.form.get("selection")
@@ -62,9 +80,12 @@ def operation():
 
 @PhoneBook.app.route("/add_contact", methods = ["GET"])
 def add_contact_page():
-    """Displays the UI for adding a contact to the phone book."""
+    """
+    Displays the UI for adding a contact to the phone book.
+    """
 
     if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to view that page.")
         return flask.redirect(flask.url_for("login_screen"))
 
     context = {}
@@ -72,7 +93,14 @@ def add_contact_page():
 
 @PhoneBook.app.route("/create_contact", methods = ["POST"])
 def create_contact():
-    """Adds a contact to the user's list of contacts in the phone book."""
+    """
+    Adds a contact to the user's list of contacts in the phone book.
+    """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
+
     database = PhoneBook.model.get_db()
 
     first_name = flask.request.form.get("first_name")
@@ -82,7 +110,9 @@ def create_contact():
     email_address = flask.request.form.get("email_address")
     home_address = flask.request.form.get("home_address")
 
-    profile_exists = database.execute("SELECT * FROM contacts WHERE contact_owner = ? AND first_name = ? AND last_name = ? AND phone_number = ?", (flask.session["logged_in_user"], first_name, last_name, phone_number)).fetchone()
+    profile_exists = database.execute("SELECT * FROM contacts WHERE contact_owner = ? AND first_name = ? "
+                                      " AND last_name = ? AND phone_number = ?",
+                                      (flask.session["logged_in_user"], first_name, last_name, phone_number)).fetchone()
 
     if profile_exists is not None:
         print(profile_exists["first_name"])
@@ -92,15 +122,21 @@ def create_contact():
     else:
         profile_picture_name = profile_picture.filename
         new_file_name = save_file(profile_picture, profile_picture_name)
-        database.execute("INSERT INTO contacts(contact_owner, first_name, last_name, profile_picture, phone_number, email_address, home_address) VALUES (?, ?, ?, ?, ?, ?, ?)", (flask.session["logged_in_user"], first_name, last_name, new_file_name, phone_number, email_address, home_address))
+        database.execute("INSERT INTO contacts(contact_owner, first_name, last_name, profile_picture, "
+                         " phone_number, email_address, home_address) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                         (flask.session["logged_in_user"], first_name, last_name, new_file_name, phone_number,
+                          email_address, home_address))
         flask.flash("Contact successfully added!")
         return flask.redirect(flask.url_for("main_page"))
 
 @PhoneBook.app.route("/delete_contact", methods = ["GET"])
 def delete_contact_page():
-    """Displays the UI for deleting a contact from the phone book."""
+    """
+    Displays the UI for deleting a contact from the phone book.
+    """
 
     if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to view that page.")
         return flask.redirect(flask.url_for("login_screen"))
     
     database = PhoneBook.model.get_db()
@@ -115,7 +151,13 @@ def delete_contact_page():
 
 @PhoneBook.app.route("/remove_contact", methods = ["POST"])
 def remove_contact():
-    """Delete a contact from the phone book."""
+    """
+    Delete a contact from the phone book.
+    """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
 
     database = PhoneBook.model.get_db()
     first_name = flask.request.form.get("first_name")
@@ -157,7 +199,14 @@ def update_contact_page():
 
 @PhoneBook.app.route("/update_contact", methods = ["POST"])
 def update_contact():
-    """Allows the user to update a contact in the phone book."""
+    """
+    Allows the user to update a contact in the phone book.
+    """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
+
     database = PhoneBook.model.get_db()
 
     old_first_name = flask.request.form.get("old_first_name")
@@ -230,9 +279,12 @@ def update_contact():
 
 @PhoneBook.app.route("/view_contacts", methods = ["GET"])
 def view_contacts():
-    """Allows the user to view their current contacts in their phone book."""
+    """
+    Allows the user to view their current contacts in their phone book.
+    """
 
     if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to view that page.")
         return flask.redirect(flask.url_for("login_screen"))
 
     context = {}
