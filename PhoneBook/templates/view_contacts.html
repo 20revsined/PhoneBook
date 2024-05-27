@@ -7,6 +7,10 @@
     </head>
 
     <body>
+        <form action = "{{url_for('main_page')}}" action = "get">
+            <input type = "Submit" value = "Back">
+        </form>
+        
         {% if num_contacts == 0 %}
             <p>No contacts to display.</p>
         {% else %}
@@ -20,10 +24,10 @@
                 <p>Email Address: {{contact["email_address"]}}</p>
                 <p>Home Address: {{contact["home_address"]}}</p>
             {% endfor %}
-        {% endif %}
 
-        <form action = "{{url_for('main_page')}}" action = "get">
-            <input type = "Submit" value = "Done">
-        </form>
+            <form action = "{{url_for('main_page')}}" action = "get">
+                <input type = "Submit" value = "Done">
+            </form>
+        {% endif %}
     </body>
 </html>
