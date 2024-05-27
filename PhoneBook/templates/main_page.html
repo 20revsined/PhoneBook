@@ -8,7 +8,8 @@
 
     <body>
         <h2>Welcome, {{logged_in_user}}!</h2>
-        <a href = "{{url_for('logout')}}">Logout</a>
+        <a id = "edit_account" href = "{{url_for('change_account')}}">Edit Account</a>
+        <a id = "logout" href = "{{url_for('logout')}}">Logout</a>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
