@@ -1,0 +1,30 @@
+body {
+    background-image: url("../images/wallpaper.png");
+}
+
+h2 {
+    font-family: Verdana;
+    font-size: 50;
+    color: white;
+    text-align: center;
+}
+
+h3 {
+    font-family: Tahoma;
+    font-size: 25;
+    color: white;
+}
+
+label {
+    font-family: Tahoma;
+    color: white;
+    text-align: center;
+}
+
+input {
+    font-family: Tahoma;
+}
+
+#new_profile_photo {
+    color: white;
+}
