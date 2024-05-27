@@ -11,12 +11,11 @@
             <input type = "Submit" value = "Back">
         </form>
 
-        <h2>Enter the Contact Information You'd Like to Update.</h2>
-
         {% if num_contacts == 0 %}
             <p>You don't have any contacts. You need to add at least one contact to your phone book before you can update any information in your contacts.</p>
         
         {% else %}
+            <h2>Enter the Contact Information You'd Like to Update.</h2>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
