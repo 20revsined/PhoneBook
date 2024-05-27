@@ -1,4 +1,7 @@
-"""PhoneBook model (database) API."""
+"""
+PhoneBook model (database) API.
+"""
+
 import sqlite3
 import flask
 import PhoneBook
