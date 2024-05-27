@@ -28,3 +28,8 @@ input {
 #new_profile_photo {
     color: white;
 }
+
+p {
+    color: white;
+    font-family: Tahoma;
+}
