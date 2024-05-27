@@ -10,10 +10,19 @@ h2 {
 
 a {
     color: white;
+    font-family: Tahoma;
+}
+
+#edit_account {
     position: relative;
     top: -40px;
-    left: 1400px;
-    font-family: Tahoma;
+    left: 1392px;
+}
+
+#logout {
+    position: relative;
+    top: -20px;
+    left: 1300px;
 }
 
 p {
