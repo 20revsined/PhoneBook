@@ -3,6 +3,7 @@
     <head>
         <title>Update a Contact</title>
         <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/update_contact_style.css')}}">
     </head>
 
     <body>
@@ -48,7 +49,7 @@
                 <br>
 
                 <label>New Profile Picture</label>
-                <input type = "file" name = "new_profile_picture">
+                <input id = "new_profile_photo" type = "file" name = "new_profile_picture">
                 <br>
 
                 <label>New Phone Number</label>

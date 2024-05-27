@@ -3,6 +3,7 @@
     <head>
         <title>Add a Contact</title>
         <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/add_contact_style.css')}}">
     </head>
 
     <body>
@@ -30,7 +31,7 @@
             <br>
 
             <label>Profile Picture</label>
-            <input type = "file" name = "profile_picture" required>
+            <input id = "upload_image" type = "file" name = "profile_picture" required>
             <br>
 
             <label>Phone Number</label>

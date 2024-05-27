@@ -3,12 +3,15 @@
     <head>
         <title>Contacts List</title>
         <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/view_contacts_style.css')}}">
     </head>
 
     <body>
         {% if num_contacts == 0 %}
             <p>No contacts to display.</p>
         {% else %}
+            <h2>List of Contacts</h2>
+
             {% for contact in contacts %}
             <img src="{{url_for('return_profile_picture', filename = contact['profile_picture'])}}" alt="contact profile picture">
                 <p>First Name: {{contact["first_name"]}}</p>
