@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Account</title>
+        <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/edit_account_style.css')}}">
+    </head>
+
+    <body>
+        <h2>Edit Account</h2>
+
+        <form action = "{{url_for('main_page')}}" method = "get">
+            <input type = "submit" value = "Back">
+        </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p>{{message}}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action = "{{url_for('change_password')}}" method = "post" enctype = "multipart/form-data">
+            <label>Old Password</label>
+            <input type = "password" name = "old_password" required>
+            <br>
+
+            <label>New Password</label>
+            <input type = "password" name = "new_password" required>
+            <br>
+
+            <label>Confirm New Password</label>
+            <input type = "password" name = "confirm_new_password" required>
+            <br>
+
+            <input type = "submit" value = "Change Password">
+        </form>
+
+        <h3>Delete Account</h3>
+        <form action = "{{url_for('delete_account')}}" method = "post">
+            <input type = "submit" value = "Delete Account">
+        </form>
+    </body>
+</html>
