@@ -22,3 +22,8 @@ input {
 #upload_image {
     color: white;
 }
+
+p {
+    font-family: Tahoma;
+    color: white;
+}
