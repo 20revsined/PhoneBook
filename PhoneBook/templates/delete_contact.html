@@ -10,13 +10,12 @@
         <form action = "{{url_for('main_page')}}" method = "get">
             <input type = "Submit" value = "Back">
         </form>
-        
-        <h2>Delete a Contact from your Phone Book.</h2>
 
         {% if num_contacts == 0 %}
             <p>You have no contacts in your phone book. You need to add at least one contact before you can delete any contacts.</p>
         
         {% else %}
+            <h2>Delete a Contact from your Phone Book.</h2>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
