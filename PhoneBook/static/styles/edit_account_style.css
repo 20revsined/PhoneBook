@@ -1,0 +1,30 @@
+body {
+    background-image: url("../images/wallpaper.png");
+}
+
+h2 {
+    font-family: Verdana;
+    font-size: 50;
+    color: white;
+    text-align: center;
+}
+
+label {
+    font-family: Tahoma;
+    color: white;
+    text-align: center;
+}
+
+input {
+    font-family: Tahoma;
+}
+
+p {
+    font-family: Tahoma;
+    color: white;
+}
+
+h3 {
+    font-family: Verdana;
+    color: white;
+}
