@@ -1,15 +1,18 @@
-"""This Python code handles account operations, such as logging in and creating an account."""
+"""
+This Python code handles account operations, such as logging in and creating an account.
+"""
 
 import flask
 import PhoneBook
 import hashlib
 import uuid
+import os
 
 @PhoneBook.app.route("/", methods = ["GET"])
 def login_screen():
     """
-    Entry point to the application. Checks whether or not the
-    user is logged in, either directing them to the main page
+    Checks whether or not the user is logged in,
+    either directing them to the main page
     or the login page.
     """
 
@@ -21,10 +24,20 @@ def login_screen():
         return flask.render_template("login_page.html", **context)
 
 @PhoneBook.app.route("/logout", methods = ["GET"])
-def logout():
-    """Logs out the current user and returns them to the login page."""
+def logout(message = ""):
+    """
+    Logs out the current user and returns them to the login page.
+    """
 
-    del flask.session["logged_in_user"]
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to view that page.")
+        return flask.redirect(flask.url_for("login_screen"))
+
+    flask.session.clear()
+
+    if message == "delete account":
+        flask.flash("Account successfully deleted.")
+
     return flask.redirect(flask.url_for("login_screen"))
 
 @PhoneBook.app.route("/check_credentials", methods = ["POST"])
@@ -35,7 +48,6 @@ def check_credentials():
     """
 
     database = PhoneBook.model.get_db()
-    context = {}
     username = flask.request.form.get("username")
     password = flask.request.form.get("password")
 
@@ -81,7 +93,6 @@ def create_user_account():
     """
 
     database = PhoneBook.model.get_db()
-    context = {}
     username = flask.request.form.get("username")
     password = flask.request.form.get("password")
     confirm_password = flask.request.form.get("confirm_password")
@@ -90,7 +101,6 @@ def create_user_account():
 
     if username_exists is not None:
         flask.flash("This user already exists.")
-        context["username"] = username
         return flask.redirect(flask.url_for("create_account_page"))
 
     elif password != confirm_password:
@@ -108,3 +118,88 @@ def create_user_account():
         database.execute("INSERT INTO users(username, password) VALUES (?, ?)", (username, password_db_value))
         flask.flash("Account successfully created! Please login.")
         return flask.redirect(flask.url_for("login_screen"))
+    
+@PhoneBook.app.route("/change_account", methods = ["GET"])
+def change_account():
+    """
+    Displays the UI for allowing a user to either change their password or
+    delete their account.
+    """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to view that page.")
+        return flask.redirect(flask.url_for("login_screen"))
+    
+    else:
+        context = {}
+        return flask.render_template("edit_account.html", **context)
+
+@PhoneBook.app.route("/change_password", methods = ["POST"])
+def change_password():
+    """
+    Allows the user to change the password to their account.
+    """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
+
+    old_password = flask.request.form.get("old_password")
+    new_password = flask.request.form.get("new_password")
+    confirm_new_password = flask.request.form.get("confirm_new_password")
+    
+    database = PhoneBook.model.get_db()
+    correct_password = database.execute("SELECT password FROM users WHERE username = ?",
+                                        (flask.session["logged_in_user"],)).fetchone()
+    password_data = correct_password["password"].split("$")
+
+    salt = password_data[1]
+    hash = hashlib.new("sha256")
+    salted_password = salt + old_password
+    hash.update(salted_password.encode("utf-8"))
+    password_hash = hash.hexdigest()
+    password_db_value = "$".join(["sha256", salt, password_hash])
+
+    correct_credentials = database.execute("SELECT * FROM users WHERE username = ? AND password = ?", (flask.session["logged_in_user"], password_db_value)).fetchone()
+
+    if correct_credentials is not None and new_password == confirm_new_password:
+        new_salt = uuid.uuid4().hex
+        new_hash = hashlib.new("sha256")
+        new_salted_password = new_salt + new_password
+        new_hash.update(new_salted_password.encode("utf-8"))
+        new_password_hash = new_hash.hexdigest()
+        new_password_db_value = "$".join(["sha256", new_salt, new_password_hash])
+
+        database.execute("UPDATE users SET password = ? WHERE username = ?", (new_password_db_value, flask.session["logged_in_user"]))
+        flask.flash("Password successfully changed.")
+        return flask.redirect(flask.url_for("main_page"))
+
+    elif correct_credentials is not None and new_password != confirm_new_password:
+        flask.flash("New password and confirm new password do not match.")
+        return flask.redirect(flask.url_for("change_account"))
+
+    elif correct_credentials is None:
+        flask.flash("Old password is incorrect.")
+        return flask.redirect(flask.url_for("change_account"))
+
+@PhoneBook.app.route("/delete_account", methods = ["POST"])
+def delete_account():
+    """
+    Deletes the logged in user's account.
+    """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
+    
+    else:
+        database = PhoneBook.model.get_db()
+        profile_pictures_delete = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ?",
+                                                   (flask.session["logged_in_user"],)).fetchall()
+
+        for picture in profile_pictures_delete:
+            os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/picture["profile_picture"])
+
+        database.execute("DELETE FROM contacts WHERE contact_owner = ?", (flask.session["logged_in_user"],))
+        database.execute("DELETE FROM users WHERE username = ?", (flask.session["logged_in_user"],))
+        return logout("delete account")
