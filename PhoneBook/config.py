@@ -1,4 +1,6 @@
-"""PhoneBook development configuration."""
+"""
+PhoneBook development configuration.
+"""
 
 import pathlib
 
