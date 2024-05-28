@@ -2,14 +2,19 @@
 <html>
     <head>
         <title>Update a Contact</title>
-        <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "icon" href = "{{url_for('static', filename = 'images/phonebook_image.png')}}">
         <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/update_contact_style.css')}}">
     </head>
 
     <body>
-        <form action = "{{url_for('main_page')}}" method = "get">
+        <form action = "{{url_for('view_contacts')}}" method = "get">
             <input id = "back_button" type = "Submit" value = "Back">
         </form>
+
+        <a id = "edit_account" href = "{{url_for('change_account', previous_page = previous_page)}}">Edit Account</a>
+        <br>
+        <br>
+        <a id = "logout" href = "{{url_for('logout')}}">Logout</a>
         
         <h2>Enter the Contact Information You'd Like to Update.</h2>
         {% with messages = get_flashed_messages() %}
@@ -20,10 +25,18 @@
             {% endif %}
         {% endwith %}
 
-        <form action = "{{url_for('update_contact')}}" method = "post" enctype = "multipart/form-data">
-            <input type = "hidden" name = "id" value = "{{contact['id']}}">
+        {% if contact["profile_picture"] != "" %}
             <img src="{{url_for('return_profile_picture', filename = contact['profile_picture'])}}" alt="contact profile picture">
             <br>
+
+            <form action = "{{url_for('delete_profile_picture')}}" method = "post" enctype = "multipart/form-data">
+                <input type = "hidden" name = "id" value = "{{contact['id']}}">
+                <input type = "submit" value = "Delete Profile Picture">
+            </form>
+        {% endif %}
+
+        <form action = "{{url_for('update_contact')}}" method = "post" enctype = "multipart/form-data">
+            <input type = "hidden" name = "id" value = "{{contact['id']}}">
 
             <label>Profile Picture</label>
             <input id = "new_profile_photo" type = "file" name = "new_profile_picture">
@@ -31,6 +44,9 @@
 
             <label>First Name</label>
             <input type = "text" name = "new_first_name" placeholder = "{{contact['first_name']}}">
+            {% if contact["first_name"] != "" %}
+                <a id = "delete_column" href = "{{url_for('delete_profile_section', id = contact['id'], column = 'first_name')}}">Clear</a>
+            {% endif %}
             <br>
 
             <label>Last Name</label>
@@ -39,14 +55,23 @@
 
             <label>Phone Number</label>
             <input type = "text" name = "new_phone_number" placeholder = "{{contact['phone_number']}}">
+            {% if contact["phone_number"] != "" %}
+                <a id = "delete_column" href = "{{url_for('delete_profile_section', id = contact['id'], column = 'phone_number')}}">Clear</a>
+            {% endif %}
             <br>
 
             <label>Email Address</label>
             <input type = "text" name = "new_email_address" placeholder = "{{contact['email_address']}}">
+            {% if contact["email_address"] != "" %}
+                <a id = "delete_column" href = "{{url_for('delete_profile_section', id = contact['id'], column = 'email_address')}}">Clear</a>
+            {% endif %}
             <br>
 
             <label>Home Address</label>
             <input type = "text" name = "new_home_address" placeholder = "{{contact['home_address']}}">
+            {% if contact["home_address"] != "" %}
+                <a id = "delete_column" href = "{{url_for('delete_profile_section', id = contact['id'], column = 'home_address')}}">Clear</a>
+            {% endif %}
             <br>
 
             <input id = "update_contact" type = "submit" value = "Update Contact">
