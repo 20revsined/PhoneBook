@@ -4,6 +4,7 @@
 
 set -Eeuxo pipefail
 
+# You may need to replace 'python3' with 'python3[.version number]' (ex. full command: python3.11 -m venv phonebook_env)
 python3 -m venv phonebook_env
 source phonebook_env/bin/activate
 
@@ -15,8 +16,8 @@ pip install -r requirements.txt
 pip install -e .
 
 # Make the other two shell scripts in the bin directory executable
-chmod +x phonebook_db
-chmod +x phonebook_run
+chmod +x bin/phonebook_db
+chmod +x bin/phonebook_run
 
 # Create the .sqlite3 file and var/uploads directories needed for PhoneBook.
-./phonebook_db create
+./bin/phonebook_db create
