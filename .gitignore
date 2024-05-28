@@ -1,5 +1,6 @@
 *.db
-var/
 __pycache__
 *_env
 *.egg-info
+*.sqlite3
+uploads
