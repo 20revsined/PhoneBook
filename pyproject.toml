@@ -6,16 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "PhoneBook"
 version = "1.0.0"
 dependencies = [
-    "arrow",
-    "bs4",
-    "Flask",
-    "html5validator",
-    "pycodestyle",
-    "pydocstyle",
-    "pylint",
-    "pytest",
-    "pytest-mock",
-    "requests",
+    "Flask"
 ]
 requires-python = ">=3.10"
 
