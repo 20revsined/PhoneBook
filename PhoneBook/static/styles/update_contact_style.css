@@ -4,25 +4,25 @@ body {
 
 h2 {
     font-family: Verdana;
-    font-size: 50;
+    font-size: 35px;
     color: white;
     text-align: center;
-}
-
-h3 {
-    font-family: Tahoma;
-    font-size: 25;
-    color: white;
 }
 
 label {
     font-family: Tahoma;
+    font-size: 25px;
     color: white;
     text-align: center;
+    position: relative;
+    left: 550px;
 }
 
 input {
     font-family: Tahoma;
+    font-size: 25px;
+    position: relative;
+    left: 550px;
 }
 
 #new_profile_photo {
@@ -32,4 +32,21 @@ input {
 p {
     color: white;
     font-family: Tahoma;
+}
+
+img {
+    height: 200px;
+    width: 200px;
+    position: relative;
+    left: 600px;
+}
+
+#back_button {
+    position: relative;
+    left: 0px;
+}
+
+#update_contact {
+    position: relative;
+    left: 625px;
 }

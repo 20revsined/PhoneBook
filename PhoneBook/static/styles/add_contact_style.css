@@ -4,7 +4,7 @@ body {
 
 h2 {
     font-family: Verdana;
-    font-size: 50;
+    font-size: 35px;
     color: white;
     text-align: center;
 }
@@ -13,17 +13,32 @@ label {
     font-family: Tahoma;
     color: white;
     text-align: center;
+    font-size: 25px;
+    position: relative;
+    left: 550px;
+}
+
+p {
+    font-family: Tahoma;
+    color: white;
+    font-size: 25px;
 }
 
 input {
     font-family: Tahoma;
+    font-size: 25px;
+    position: relative;
+    left: 550px;
 }
 
 #upload_image {
     color: white;
 }
 
-p {
-    font-family: Tahoma;
-    color: white;
+#back_button {
+    left: 0px;
+}
+
+#add_contact_button {
+    left: 675px;
 }

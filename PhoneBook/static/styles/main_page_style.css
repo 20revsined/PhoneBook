@@ -4,37 +4,54 @@ body {
 
 h2 {
     font-family: Verdana;
-    font-size: 50;
+    font-size: 35px;
     color: white;
+    position: relative;
+    left: 560px;
 }
 
 a {
     color: white;
     font-family: Tahoma;
+    font-size: 20px;
 }
 
 #edit_account {
     position: relative;
     top: -40px;
-    left: 1392px;
+    left: 1350px;
 }
 
 #logout {
     position: relative;
     top: -20px;
-    left: 1300px;
+    left: 1350px;
 }
 
 p {
     color: white;
     font-family: Tahoma;
+    font-size: 25px;
+    position: relative;
+    left: 590px;
 }
 
 label {
     color: white;
     font-family: Tahoma;
+    font-size: 25px;
+    position: relative;
+    left: 600px;
 }
 
 input {
     font-family: Tahoma;
+    position: relative;
+    left: 600px;
+    font-size: 20px;
+}
+
+#go_button {
+    position: relative;
+    left: 700px;
 }

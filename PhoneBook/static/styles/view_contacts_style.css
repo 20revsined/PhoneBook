@@ -3,22 +3,53 @@ body {
 }
 
 img {
-    height: 100px;
-    width: 100px;
+    height: 200px;
+    width: 200px;
+    position: relative;
+    left: 650px;
 }
 
 h2 {
     font-family: Verdana;
-    font-size: 50;
+    font-size: 35px;
     color: white;
     text-align: center;
+}
+
+label {
+    font-family: Tahoma;
+    color: white;
+    font-size: 25px;
+    position: relative;
+    left: 650px;
 }
 
 p {
     font-family: Tahoma;
     color: white;
+    font-size: 25px;
+    position: relative;
+    left: 600px;
 }
 
 input {
     font-family: Tahoma;
+    font-size: 25px;
+    position: relative;
+    left: 675px;
+}
+
+#back {
+    position: relative;
+    left: 0px;
+}
+
+#done {
+    font-family: Tahoma;
+    font-size: 25px;
+    left: 720px;
+}
+
+#yes_or_no {
+    left: 700px;
 }

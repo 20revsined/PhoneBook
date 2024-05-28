@@ -4,22 +4,38 @@ body {
 
 h2 {
     font-family: Verdana;
-    font-size: 50;
+    font-size: 30px;
     color: white;
     text-align: center;
 }
 
 label {
     font-family: Tahoma;
+    font-size: 25px;
     color: white;
-    text-align: center;
+    position: relative;
+    left: 600px;
 }
 
 input {
     font-family: Tahoma;
+    font-size: 25px;
+    position: relative;
+    left: 600px;
 }
 
 p {
     font-family: Tahoma;
+    font-size: 25px;
     color: white;
+    position: relative;
+    left: 600px;
+}
+
+#back {
+    left: 0px;
+}
+
+#create {
+    left: 700px;
 }
