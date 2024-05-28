@@ -50,6 +50,10 @@ def check_credentials():
     logging in the user if so.
     """
 
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
+
     database = PhoneBook.model.get_db()
     username = flask.request.form.get("username")
     password = flask.request.form.get("password")
@@ -95,6 +99,10 @@ def create_user_account():
     """
     Attempts to create a new user account.
     """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform that functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
 
     database = PhoneBook.model.get_db()
     username = flask.request.form.get("username")
