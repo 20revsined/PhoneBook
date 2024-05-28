@@ -7,17 +7,19 @@ The app uses HTML for the frontend and Python and SQLite for the backend.
 
 ## Getting Started
 Note: This installation assumes that you have at least Python >= 3.10 installed on your computer.
-If not, please install a Python version >= 3.10.
+If not, please install a Python version >= 3.10. You can check your version of Python by running
+`python3 --version` or `python --version` on your command line.
 
 This installation also assumes that you are familiar with using your computer's command line,
 since you will be using it for the setup of this app.
 
 1. Clone this repository by typing `git clone git@github.com:20revsined/PhoneBook.git` (using SSH)
-or `git clone https://github.com/20revsined/PhoneBook.git` (using the web URL) - whichever works for you.
+or `git clone https://github.com/20revsined/PhoneBook.git` (using the web URL) on your command line.
 If you prefer the GitHub CLI, using the following command: `gh repo clone 20revsined/PhoneBook`.
 
-2. After opening the files in an IDE, run the following command: `chmod +x bin/phonebook_install`, which will make the phonebook_install
+2. After opening the files in an IDE, run the following command on your command line: `chmod +x bin/phonebook_install`, which will make the phonebook_install
 script executable. This will allow you to run this script, which will install the necessary dependencies for this project.
+If you don't have permission to run this command, run `sudo chmod +x bin/phonebook_install`.
 
 3. Then, run the following command, `./bin/phonebook_install`, which will run the `phonebook_install` shell script.
 If you run `python3 --version`, and your version is less than 3.10, see lines 7 and 8 in `phonebook_install` for a
