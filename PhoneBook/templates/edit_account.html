@@ -2,14 +2,16 @@
 <html>
     <head>
         <title>Edit Account</title>
-        <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "icon" href = "{{url_for('static', filename = 'images/phonebook_image.png')}}">
         <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/edit_account_style.css')}}">
     </head>
 
     <body>
-        <form action = "{{url_for('main_page')}}" method = "get">
+        <form action = "{{previous_page}}" method = "get">
             <input id = "back" type = "submit" value = "Back">
         </form>
+
+        <a href = "{{url_for('logout')}}">Logout</a>
 
         <h2>Edit Account</h2>
 
