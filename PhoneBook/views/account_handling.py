@@ -140,7 +140,6 @@ def change_account():
         return flask.redirect(flask.url_for("login_screen"))
 
     else:
-        print(flask.request.args.get("id"))
         delete = flask.request.args.get("delete", default = "no")
         previous_page = flask.request.args.get("previous_page")
         context = {"delete": delete, "previous_page": previous_page}
@@ -213,7 +212,8 @@ def delete_account():
                                                    (flask.session["logged_in_user"],)).fetchall()
 
         for picture in profile_pictures_delete:
-            os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/picture["profile_picture"])
+            if picture["profile_picture"] != "":
+                os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/picture["profile_picture"])
 
         database.execute("DELETE FROM contacts WHERE contact_owner = ?", (flask.session["logged_in_user"],))
         database.execute("DELETE FROM users WHERE username = ?", (flask.session["logged_in_user"],))
