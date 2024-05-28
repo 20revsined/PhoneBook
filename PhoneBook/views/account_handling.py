@@ -95,6 +95,8 @@ def create_user_account():
     database = PhoneBook.model.get_db()
     username = flask.request.form.get("username")
     password = flask.request.form.get("password")
+    first_name = flask.request.form.get("first_name")
+    last_name = flask.request.form.get("last_name")
     confirm_password = flask.request.form.get("confirm_password")
 
     username_exists = database.execute("SELECT username FROM users WHERE username = ?", (username,)).fetchone()
@@ -115,7 +117,9 @@ def create_user_account():
         password_hash = hash.hexdigest()
         password_db_value = "$".join(["sha256", salt, password_hash])
 
-        database.execute("INSERT INTO users(username, password) VALUES (?, ?)", (username, password_db_value))
+        database.execute("INSERT INTO users(username, password, first_name, last_name) VALUES (?, ?, ?, ?)",
+                         (username, password_db_value, first_name, last_name))
+        
         flask.flash("Account successfully created! Please login.")
         return flask.redirect(flask.url_for("login_screen"))
     
@@ -131,7 +135,8 @@ def change_account():
         return flask.redirect(flask.url_for("login_screen"))
     
     else:
-        context = {}
+        delete = flask.request.args.get("delete", default = "no")
+        context = {"delete": delete}
         return flask.render_template("edit_account.html", **context)
 
 @PhoneBook.app.route("/change_password", methods = ["POST"])
