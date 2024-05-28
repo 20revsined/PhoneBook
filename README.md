@@ -29,7 +29,15 @@ workaround.
 `source phonebook/env/activate`. You can leave the environment at any time by typing `deactivate` in your command line.
 
 5. To run the app, run the following command: `./bin/phonebook_run`. To stop running the app, hit control + C in
-your command line.
+your command line. Make sure to allow incoming connections if prompted by your computer.
+To use the app, go to your favorite web browser and type the following for the URL: `localhost:8000`.
+
+## Database Shell Script Information
+If you want to reset the stored data in the database back to what it was, type the following
+in your command line (make sure you're in the PhoneBook directory): `./bin/phonebook_db reset`.
+
+If you want to delete the database, type the following in your command line (make sure you're in the PhoneBook directory): `./bin/phonebook_db delete`.
+Then, type the following to recreate it: `./bin/phonebook_db create` or `./bin/phonebook_db reset`.
 
 ## Important Note
 Please do not store any sensitive information in the database.
