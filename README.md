@@ -16,7 +16,7 @@ since you will be using it for the setup of this app.
 or `git clone https://github.com/20revsined/PhoneBook.git` (using the web URL) - whichever works for you.
 If you prefer the GitHub CLI, using the following command: `gh repo clone 20revsined/PhoneBook`.
 
-2. After opening the app, run the following command: `chmod +x bin/phonebook_install`, which will make the phonebook_install
+2. After opening the files in an IDE, run the following command: `chmod +x bin/phonebook_install`, which will make the phonebook_install
 script executable. This will allow you to run this script, which will install the necessary dependencies for this project.
 
 3. Then, run the following command, `./bin/phonebook_install`, which will run the `phonebook_install` shell script.
