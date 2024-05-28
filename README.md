@@ -29,9 +29,8 @@ workaround.
 5. After installing of the necessary dependencies and the app itself, enter the virtual environment by typing:
 `source phonebook/env/activate`. You can leave the environment at any time by typing `deactivate` in your command line.
 
-6. To run the app, run the following command: `./bin/phonebook_run`. To stop running the app, hit control + C in
-your command line. Make sure to allow incoming connections if prompted by your computer.
-To use the app, go to your favorite web browser and type the following for the URL: `localhost:8000`.
+6. To run the app, run the following command: `./bin/phonebook_run`. To use the app, go to your favorite web browser and type the following for the URL: `localhost:8000`.
+If prompted by your computer, make sure to allow incoming connections. To stop running the app, hit control + C in your command line.
 
 ## Database Shell Script Information
 If you want to reset the stored data in the database back to what it was, type the following
