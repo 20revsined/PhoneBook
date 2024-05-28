@@ -44,3 +44,11 @@ input {
 #add_contact_button {
     left: 675px;
 }
+
+a {
+    font-family: Tahoma;
+    font-size: 20px;
+    color: white;
+    position: relative;
+    left: 1350px;
+}

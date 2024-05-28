@@ -35,6 +35,14 @@ p {
     left: 600px;
 }
 
+a {
+    font-family: Tahoma;
+    font-size: 20px;
+    color: white;
+    position: relative;
+    left: 1350px;
+}
+
 input {
     font-family: Tahoma;
     font-size: 25px;

@@ -56,3 +56,16 @@ img {
     position: relative;
     left: 625px;
 }
+
+a {
+    font-family: Tahoma;
+    font-size: 20px;
+    color: white;
+    position: relative;
+    left: 1350px;
+}
+
+#delete_column {
+    font-size: 25px;
+    left: 600px;
+}
