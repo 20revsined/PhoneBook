@@ -24,9 +24,9 @@ case $1 in
         exit 1
     
     else
+        mkdir -p var/uploads
         sqlite3 var/phonebook.sqlite3 < sql/schema.sql
         sqlite3 var/phonebook.sqlite3 < sql/sample_data.sql
-        mkdir -p var/uploads
     fi
     ;;
 
@@ -36,9 +36,9 @@ case $1 in
 
   "reset")
     rm -rf var/phonebook.sqlite3 var/uploads
+    mkdir -p var/uploads
     sqlite3 var/phonebook.sqlite3 < sql/schema.sql
     sqlite3 var/phonebook.sqlite3 < sql/sample_data.sql
-    mkdir -p var/uploads
     ;;
   *)
     usage
