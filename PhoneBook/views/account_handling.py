@@ -8,6 +8,7 @@ import hashlib
 import uuid
 import os
 
+
 @PhoneBook.app.route("/", methods = ["GET"])
 def login_screen():
     """
@@ -18,10 +19,11 @@ def login_screen():
 
     if "logged_in_user" in flask.session:
         return flask.redirect(flask.url_for("main_page"))
-    
+
     else:
         context = {}
         return flask.render_template("login_page.html", **context)
+
 
 @PhoneBook.app.route("/logout", methods = ["GET"])
 def logout(message = ""):
@@ -39,6 +41,7 @@ def logout(message = ""):
         flask.flash("Account successfully deleted.")
 
     return flask.redirect(flask.url_for("login_screen"))
+
 
 @PhoneBook.app.route("/check_credentials", methods = ["POST"])
 def check_credentials():
@@ -71,7 +74,7 @@ def check_credentials():
         if correct_credentials is not None:
             flask.session["logged_in_user"] = username
             return flask.redirect(flask.url_for("main_page"))
-        
+
         else:
             flask.flash("Incorrect username or password.", category = "message")
             return flask.redirect(flask.url_for("login_screen"))
@@ -85,6 +88,7 @@ def create_account_page():
 
     context = {}
     return flask.render_template("create_account.html", **context)
+
 
 @PhoneBook.app.route("/create_user_account", methods = ["POST"])
 def create_user_account():
@@ -108,7 +112,7 @@ def create_user_account():
     elif password != confirm_password:
         flask.flash("Password and confirm password do not match.")
         return flask.redirect(flask.url_for("create_account_page"))
-    
+
     else:
         salt = uuid.uuid4().hex
         hash = hashlib.new("sha256")
@@ -119,10 +123,11 @@ def create_user_account():
 
         database.execute("INSERT INTO users(username, password, first_name, last_name) VALUES (?, ?, ?, ?)",
                          (username, password_db_value, first_name, last_name))
-        
+
         flask.flash("Account successfully created! Please login.")
         return flask.redirect(flask.url_for("login_screen"))
-    
+
+
 @PhoneBook.app.route("/change_account", methods = ["GET"])
 def change_account():
     """
@@ -133,11 +138,15 @@ def change_account():
     if "logged_in_user" not in flask.session:
         flask.flash("You must be logged in to view that page.")
         return flask.redirect(flask.url_for("login_screen"))
-    
+
     else:
+        print(flask.request.args.get("id"))
         delete = flask.request.args.get("delete", default = "no")
-        context = {"delete": delete}
+        previous_page = flask.request.args.get("previous_page")
+        context = {"delete": delete, "previous_page": previous_page}
+
         return flask.render_template("edit_account.html", **context)
+
 
 @PhoneBook.app.route("/change_password", methods = ["POST"])
 def change_password():
@@ -152,7 +161,7 @@ def change_password():
     old_password = flask.request.form.get("old_password")
     new_password = flask.request.form.get("new_password")
     confirm_new_password = flask.request.form.get("confirm_new_password")
-    
+
     database = PhoneBook.model.get_db()
     correct_password = database.execute("SELECT password FROM users WHERE username = ?",
                                         (flask.session["logged_in_user"],)).fetchone()
@@ -187,6 +196,7 @@ def change_password():
         flask.flash("Old password is incorrect.")
         return flask.redirect(flask.url_for("change_account"))
 
+
 @PhoneBook.app.route("/delete_account", methods = ["POST"])
 def delete_account():
     """
@@ -196,7 +206,7 @@ def delete_account():
     if "logged_in_user" not in flask.session:
         flask.flash("You must be logged in to perform that functionality.")
         return flask.redirect(flask.url_for("login_screen"))
-    
+
     else:
         database = PhoneBook.model.get_db()
         profile_pictures_delete = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ?",
