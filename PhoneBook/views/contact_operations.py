@@ -28,7 +28,7 @@ def return_profile_picture(filename):
     Attempts to return the profile_picture of a given contact.
     """
 
-    if "logged_in_user" not in flask.session and filename != "phonebook_icon.png":
+    if "logged_in_user" not in flask.session:
         flask.flash("You must be logged in to perform that functionality.")
         return flask.redirect(flask.url_for("login_screen"))
     
@@ -109,24 +109,22 @@ def create_contact():
     email_address = flask.request.form.get("email_address")
     home_address = flask.request.form.get("home_address")
 
-    profile_exists = database.execute("SELECT * FROM contacts WHERE contact_owner = ? AND first_name = ? "
-                                      " AND last_name = ? AND phone_number = ?",
-                                      (flask.session["logged_in_user"], first_name, last_name, phone_number)).fetchone()
-
-    if profile_exists is not None:
-        print(profile_exists["first_name"])
-        flask.flash("This contact already exists.")
-        return flask.redirect(flask.url_for("add_contact_page"))
-    
-    else:
+    if profile_picture.filename != "":
         profile_picture_name = profile_picture.filename
         new_file_name = save_file(profile_picture, profile_picture_name)
         database.execute("INSERT INTO contacts(contact_owner, first_name, last_name, profile_picture, "
-                         " phone_number, email_address, home_address) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                         (flask.session["logged_in_user"], first_name, last_name, new_file_name, phone_number,
-                          email_address, home_address))
-        flask.flash("Contact successfully added!")
-        return flask.redirect(flask.url_for("main_page"))
+                        " phone_number, email_address, home_address) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (flask.session["logged_in_user"], first_name, last_name, new_file_name, phone_number,
+                        email_address, home_address))
+    
+    else:
+        database.execute("INSERT INTO contacts(contact_owner, first_name, last_name, profile_picture, "
+                        " phone_number, email_address, home_address) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (flask.session["logged_in_user"], first_name, last_name, profile_picture.filename, phone_number,
+                        email_address, home_address))
+        
+    flask.flash("Contact successfully added!")
+    return flask.redirect(flask.url_for("main_page"))
 
 @PhoneBook.app.route("/delete_contact", methods = ["POST"])
 def delete_contact():
@@ -139,15 +137,55 @@ def delete_contact():
         return flask.redirect(flask.url_for("login_screen"))
 
     database = PhoneBook.model.get_db()
-    id = flask.request.form.get("id", type = int)
-    profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
-                                        (flask.session["logged_in_user"], id)).fetchone()
-    os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/profile_picture["profile_picture"])
+    delete_all_contacts = flask.request.form.get("confirm_yes", type = str, default = "no")
+
+    if delete_all_contacts == "no":
+        id = flask.request.form.get("id", type = int)
+        profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
+                                            (flask.session["logged_in_user"], id)).fetchone()
+
+        if profile_picture["profile_picture"] != "":
+            os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/profile_picture["profile_picture"])
+        
+        database.execute("DELETE FROM contacts WHERE contact_owner = ? AND id = ?",
+                            (flask.session["logged_in_user"], id))
+        flask.flash("Contact entry successfully deleted.")
+        return flask.redirect(flask.url_for("view_contacts"))
     
-    database.execute("DELETE FROM contacts WHERE contact_owner = ? AND id = ?",
-                        (flask.session["logged_in_user"], id))
-    flask.flash("Contact entry successfully deleted.")
-    return flask.redirect(flask.url_for("view_contacts"))
+    elif delete_all_contacts == "yes":
+        profile_pictures = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ?",
+                                            (flask.session["logged_in_user"],)).fetchall()
+        
+        for profile_picture in profile_pictures:
+            if profile_picture["profile_picture"] != "":
+                os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/profile_picture["profile_picture"])
+        
+        database.execute("DELETE FROM contacts WHERE contact_owner = ?", (flask.session["logged_in_user"],))
+        flask.flash("All contacts successfully deleted.")
+        return flask.redirect(flask.url_for("main_page"))
+
+@PhoneBook.app.route("/delete_profile_picture", methods = ["POST"])
+def delete_profile_picture():
+    """
+    Deletes a given contact's profile picture.
+    """
+
+    if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to perform this functionality.")
+        return flask.redirect(flask.url_for("login_screen"))
+
+    id = flask.request.form.get("id", type = int)
+    database = PhoneBook.model.get_db()
+
+    profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
+                                       (flask.session["logged_in_user"], id)).fetchone()
+    
+    os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/profile_picture["profile_picture"])
+    database.execute("UPDATE contacts SET profile_picture = ? WHERE contact_owner = ? AND id = ?",
+                     ("", flask.session["logged_in_user"], id))
+    
+    flask.flash("Profile picture successfully deleted.")
+    return flask.redirect(flask.url_for("update_contact_page", id = id))
 
 @PhoneBook.app.route("/update_contact_page", methods = ["GET"])
 def update_contact_page():
@@ -201,7 +239,8 @@ def update_contact():
         old_profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
                                 (flask.session["logged_in_user"], id)).fetchone()
 
-        os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/old_profile_picture["profile_picture"])
+        if old_profile_picture["profile_picture"] != "":
+            os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/old_profile_picture["profile_picture"])
 
         new_profile_picture_name = new_profile_picture.filename
         new_file_name = save_file(new_profile_picture, new_profile_picture_name)
@@ -245,6 +284,7 @@ def view_contacts():
 
     context = {}
     id = flask.request.args.get("id", type = int, default = -1)
+    delete_everything = flask.request.args.get("delete_everything", type = str, default = "")
 
     database = PhoneBook.model.get_db()
     name = database.execute("SELECT first_name, last_name FROM users WHERE username = ?",
@@ -258,5 +298,6 @@ def view_contacts():
     context["num_contacts"] = len(contacts)
     context["first_name"] = name["first_name"]
     context["last_name"] = name["last_name"]
+    context["delete_everything"] = delete_everything
 
     return flask.render_template("view_contacts.html", **context)
