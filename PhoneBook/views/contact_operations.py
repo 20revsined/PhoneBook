@@ -50,7 +50,12 @@ def main_page():
         return flask.redirect(flask.url_for("login_screen"))
     
     else:
-        context = {"logged_in_user": flask.session["logged_in_user"]}
+        database = PhoneBook.model.get_db()
+        name = database.execute("SELECT first_name, last_name FROM users WHERE username = ?",
+                                (flask.session["logged_in_user"],)).fetchone()
+        
+
+        context = {"first_name": name["first_name"], "last_name": name["last_name"]}
         return flask.render_template("main_page.html", **context)
     
 @PhoneBook.app.route("/operation", methods = ["POST"])
@@ -68,12 +73,6 @@ def operation():
     
     if decision == "create":
         return flask.redirect(flask.url_for("add_contact_page"))
-
-    elif decision == "delete":
-        return flask.redirect(flask.url_for("delete_contact_page"))
-
-    elif decision == "update":
-        return flask.redirect(flask.url_for("update_contact_page"))
     
     elif decision == "view":
         return flask.redirect(flask.url_for("view_contacts"))
@@ -129,28 +128,8 @@ def create_contact():
         flask.flash("Contact successfully added!")
         return flask.redirect(flask.url_for("main_page"))
 
-@PhoneBook.app.route("/delete_contact", methods = ["GET"])
-def delete_contact_page():
-    """
-    Displays the UI for deleting a contact from the phone book.
-    """
-
-    if "logged_in_user" not in flask.session:
-        flask.flash("You must be logged in to view that page.")
-        return flask.redirect(flask.url_for("login_screen"))
-    
-    database = PhoneBook.model.get_db()
-    context = {}
-    contacts = database.execute("SELECT * FROM contacts WHERE contact_owner = ?",
-                                    (flask.session["logged_in_user"],)).fetchall()
-    
-    context["num_contacts"] = len(contacts)
-    context["contacts"] = contacts
-    
-    return flask.render_template("delete_contact.html", **context)
-
-@PhoneBook.app.route("/remove_contact", methods = ["POST"])
-def remove_contact():
+@PhoneBook.app.route("/delete_contact", methods = ["POST"])
+def delete_contact():
     """
     Delete a contact from the phone book.
     """
@@ -160,41 +139,31 @@ def remove_contact():
         return flask.redirect(flask.url_for("login_screen"))
 
     database = PhoneBook.model.get_db()
-    first_name = flask.request.form.get("first_name")
-    last_name = flask.request.form.get("last_name")
-    phone_number = flask.request.form.get("phone_number")
-
-    valid_entry = database.execute("SELECT * FROM contacts WHERE contact_owner = ? AND first_name = ? AND "
-                                   "last_name = ? AND phone_number = ?", (flask.session["logged_in_user"],
-                                    first_name, last_name, phone_number)).fetchone()
-    if valid_entry is not None:
-        profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
-                                           (flask.session["logged_in_user"], valid_entry["id"])).fetchone()
-        os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/profile_picture["profile_picture"])
-        
-        database.execute("DELETE FROM contacts WHERE contact_owner = ? AND id = ?",
-                         (flask.session["logged_in_user"], valid_entry["id"]))
-        flask.flash("Contact entry successfully deleted.")
-        return flask.redirect(flask.url_for("main_page"))
-    else:
-        flask.flash("Unable to delete this entry from the phone book. "
-        "Please ensure that you are the owner of this contact and have entered the data in the text boxes correctly.")
-        return flask.redirect(flask.url_for("delete_contact_page"))
+    id = flask.request.form.get("id", type = int)
+    profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
+                                        (flask.session["logged_in_user"], id)).fetchone()
+    os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/profile_picture["profile_picture"])
+    
+    database.execute("DELETE FROM contacts WHERE contact_owner = ? AND id = ?",
+                        (flask.session["logged_in_user"], id))
+    flask.flash("Contact entry successfully deleted.")
+    return flask.redirect(flask.url_for("view_contacts"))
 
 @PhoneBook.app.route("/update_contact_page", methods = ["GET"])
 def update_contact_page():
     """Allows the user to update one of their contacts in the phone book."""
 
     if "logged_in_user" not in flask.session:
+        flask.flash("You must be logged in to view that page.")
         return flask.redirect(flask.url_for("login_screen"))
 
     database = PhoneBook.model.get_db()
+    id = flask.request.args.get("id")
     context = {}
-    contacts = database.execute("SELECT * FROM contacts WHERE contact_owner = ?",
-                                    (flask.session["logged_in_user"],)).fetchall()
-    
-    context["num_contacts"] = len(contacts)
-    context["contacts"] = contacts
+    contact = database.execute("SELECT * FROM contacts WHERE contact_owner = ? AND id = ?",
+                                    (flask.session["logged_in_user"], id)).fetchone()
+
+    context["contact"] = contact
     return flask.render_template("update_contact.html", **context)
 
 @PhoneBook.app.route("/update_contact", methods = ["POST"])
@@ -208,74 +177,61 @@ def update_contact():
         return flask.redirect(flask.url_for("login_screen"))
 
     database = PhoneBook.model.get_db()
+    id = flask.request.form.get("id")
+    new_first_name = flask.request.form.get("new_first_name")
+    new_last_name = flask.request.form.get("new_last_name")
+    new_profile_picture = flask.request.files.get("new_profile_picture")
+    new_phone_number = flask.request.form.get("new_phone_number")
+    new_email_address = flask.request.form.get("new_email_address")
+    new_home_address = flask.request.form.get("new_home_address")
 
-    old_first_name = flask.request.form.get("old_first_name")
-    old_last_name = flask.request.form.get("old_last_name")
-    old_phone_number = flask.request.form.get("old_phone_number")
+    contact_info_changed = False
 
-    contact_exists = database.execute("SELECT * FROM contacts WHERE contact_owner = ? AND first_name = ?"
-                                      "AND last_name = ? AND phone_number = ?",
-                            (flask.session["logged_in_user"], old_first_name, old_last_name, old_phone_number)).fetchone()
+    if new_first_name is not None and new_first_name != "":
+        database.execute("UPDATE contacts SET first_name = ? WHERE contact_owner = ? AND id = ?",
+                            (new_first_name, flask.session["logged_in_user"], id))
+        contact_info_changed = True
     
-    if contact_exists is not None:
-        new_first_name = flask.request.form.get("new_first_name")
-        new_last_name = flask.request.form.get("new_last_name")
-        new_profile_picture = flask.request.files.get("new_profile_picture")
-        new_phone_number = flask.request.form.get("new_phone_number")
-        new_email_address = flask.request.form.get("new_email_address")
-        new_home_address = flask.request.form.get("new_home_address")
+    if new_last_name is not None and new_last_name != "":
+        database.execute("UPDATE contacts SET last_name = ? WHERE contact_owner = ? AND id = ?",
+                            (new_last_name, flask.session["logged_in_user"], id))
+        contact_info_changed = True
 
-        contact_info_changed = False
+    if new_profile_picture is not None and new_profile_picture.filename != "":
+        old_profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
+                                (flask.session["logged_in_user"], id)).fetchone()
 
-        if new_first_name is not None and new_first_name != "":
-            database.execute("UPDATE contacts SET first_name = ? WHERE contact_owner = ? AND id = ?",
-                             (new_first_name, flask.session["logged_in_user"], contact_exists["id"]))
-            contact_info_changed = True
+        os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/old_profile_picture["profile_picture"])
+
+        new_profile_picture_name = new_profile_picture.filename
+        new_file_name = save_file(new_profile_picture, new_profile_picture_name)
+        database.execute("UPDATE contacts SET profile_picture = ? WHERE contact_owner = ? and id = ?",
+                            (new_file_name, flask.session["logged_in_user"], id))
         
-        if new_last_name is not None and new_last_name != "":
-            database.execute("UPDATE contacts SET last_name = ? WHERE contact_owner = ? AND id = ?",
-                             (new_last_name, flask.session["logged_in_user"], contact_exists["id"]))
-            contact_info_changed = True
+        contact_info_changed = True
 
-        if new_profile_picture is not None and new_profile_picture.filename != "":
-            old_profile_picture = database.execute("SELECT profile_picture FROM contacts WHERE contact_owner = ? AND id = ?",
-                                    (flask.session["logged_in_user"], contact_exists["id"])).fetchone()
+    if new_phone_number is not None and new_phone_number != "":
+        database.execute("UPDATE contacts SET phone_number = ? WHERE contact_owner = ? AND id = ?",
+                            (new_phone_number, flask.session["logged_in_user"], id))
+        contact_info_changed = True
 
-            os.remove(PhoneBook.app.config["UPLOAD_FOLDER"]/old_profile_picture["profile_picture"])
+    if new_email_address is not None and new_email_address != "":
+        database.execute("UPDATE contacts SET email_address = ? WHERE contact_owner = ? AND id = ?",
+                            (new_email_address, flask.session["logged_in_user"], id))
+        contact_info_changed = True
 
-            new_profile_picture_name = new_profile_picture.filename
-            new_file_name = save_file(new_profile_picture, new_profile_picture_name)
-            database.execute("UPDATE contacts SET profile_picture = ? WHERE contact_owner = ? and id = ?",
-                             (new_file_name, flask.session["logged_in_user"], contact_exists["id"]))
-            
-            contact_info_changed = True
+    if new_home_address is not None and new_home_address != "":
+        database.execute("UPDATE contacts SET home_address = ? WHERE contact_owner = ? AND id = ?",
+                            (new_home_address, flask.session["logged_in_user"], id))
+        contact_info_changed = True
 
-        if new_phone_number is not None and new_phone_number != "":
-            database.execute("UPDATE contacts SET phone_number = ? WHERE contact_owner = ? AND id = ?",
-                             (new_phone_number, flask.session["logged_in_user"], contact_exists["id"]))
-            contact_info_changed = True
-
-        if new_email_address is not None and new_email_address != "":
-            database.execute("UPDATE contacts SET email_address = ? WHERE contact_owner = ? AND id = ?",
-                             (new_email_address, flask.session["logged_in_user"], contact_exists["id"]))
-            contact_info_changed = True
-
-        if new_home_address is not None and new_home_address != "":
-            database.execute("UPDATE contacts SET home_address = ? WHERE contact_owner = ? AND id = ?",
-                             (new_home_address, flask.session["logged_in_user"], contact_exists["id"]))
-            contact_info_changed = True
-
-        if contact_info_changed:
-            flask.flash("Contact successfully updated.")
-            return flask.redirect(flask.url_for("main_page"))
-        
-        else:
-            flask.flash("Contact not updated.")
-            return flask.redirect(flask.url_for("main_page"))
-
+    if contact_info_changed:
+        flask.flash("Contact successfully updated.")
+        return flask.redirect(flask.url_for("view_contacts"))
+    
     else:
-        flask.flash("Could not find this contact. Please ensure that you've entered the information correctly.")
-        return flask.redirect(flask.url_for("update_contact_page"))
+        flask.flash("Contact not updated.")
+        return flask.redirect(flask.url_for("view_contacts"))
 
 @PhoneBook.app.route("/view_contacts", methods = ["GET"])
 def view_contacts():
@@ -288,12 +244,19 @@ def view_contacts():
         return flask.redirect(flask.url_for("login_screen"))
 
     context = {}
+    id = flask.request.args.get("id", type = int, default = -1)
+
     database = PhoneBook.model.get_db()
+    name = database.execute("SELECT first_name, last_name FROM users WHERE username = ?",
+                            (flask.session["logged_in_user"],)).fetchone()
     contacts = database.execute("SELECT * FROM contacts WHERE contact_owner = ?",
                                     (flask.session["logged_in_user"],)).fetchall()
     
     contacts = sorted(contacts, key = lambda x: x["last_name"])
-    context["num_contacts"] = len(contacts)
+    context["id"] = id
     context["contacts"] = contacts
+    context["num_contacts"] = len(contacts)
+    context["first_name"] = name["first_name"]
+    context["last_name"] = name["last_name"]
 
     return flask.render_template("view_contacts.html", **context)
