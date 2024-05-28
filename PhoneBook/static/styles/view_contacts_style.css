@@ -7,6 +7,9 @@ img {
     width: 200px;
     position: relative;
     left: 650px;
+    font-family: Tahoma;
+    font-size: 25px;
+    color: white;
 }
 
 h2 {
@@ -52,4 +55,8 @@ input {
 
 #yes_or_no {
     left: 700px;
+}
+
+#delete {
+    left: 625px;
 }

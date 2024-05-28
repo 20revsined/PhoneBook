@@ -22,6 +22,8 @@ p {
     font-family: Tahoma;
     color: white;
     font-size: 25px;
+    position: relative;
+    left: 650px;
 }
 
 input {

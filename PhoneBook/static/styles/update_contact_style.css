@@ -32,6 +32,9 @@ input {
 p {
     color: white;
     font-family: Tahoma;
+    font-size: 25px;
+    position: relative;
+    left: 625px;
 }
 
 img {
@@ -39,6 +42,9 @@ img {
     width: 200px;
     position: relative;
     left: 600px;
+    font-family: Tahoma;
+    font-size: 25px;
+    color: white;
 }
 
 #back_button {
