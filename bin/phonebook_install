@@ -1,0 +1,22 @@
+#!/bin/bash
+# phonebook_install
+# This shell script sets up and installs the necessary items needed to run this app.
+
+set -Eeuxo pipefail
+
+python3 -m venv phonebook_env
+source phonebook_env/bin/activate
+
+# Install necessary Python packages for this environment
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+
+# Install PhoneBook into the virtual environment.
+pip install -e .
+
+# Make the other two shell scripts in the bin directory executable
+chmod +x phonebook_db
+chmod +x phonebook_run
+
+# Create the .sqlite3 file and var/uploads directories needed for PhoneBook.
+./phonebook_db create
