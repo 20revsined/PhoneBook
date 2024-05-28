@@ -7,6 +7,10 @@
     </head>
 
     <body>
+        <form action = "{{url_for('login_screen')}}" action = "get">
+            <input id = "back" type = "Submit" value = "Back">
+        </form>
+
         <h2>Welcome, new user! Please enter your username and password for your account.</h2>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -21,6 +25,14 @@
             <input type = "text" name = "username" required>
             <br>
 
+            <label>First Name</label>
+            <input type = "text" name = "first_name" required>
+            <br>
+
+            <label>Last Name</label>
+            <input type = "text" name = "last_name" required>
+            <br>
+
             <label>Password</label>
             <input type = "password" name = "password" required>
             <br>
@@ -29,11 +41,7 @@
             <input type = "password" name = "confirm_password" required>
             <br>
 
-            <input type = "submit" value = "Create Account">
-        </form>
-
-        <form action = "{{url_for('login_screen')}}" action = "get">
-            <input type = "Submit" value = "Cancel">
+            <input id = "create" type = "submit" value = "Create Account">
         </form>
     </body>
 </html>

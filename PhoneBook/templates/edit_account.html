@@ -7,11 +7,11 @@
     </head>
 
     <body>
-        <h2>Edit Account</h2>
-
         <form action = "{{url_for('main_page')}}" method = "get">
-            <input type = "submit" value = "Back">
+            <input id = "back" type = "submit" value = "Back">
         </form>
+
+        <h2>Edit Account</h2>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -34,12 +34,30 @@
             <input type = "password" name = "confirm_new_password" required>
             <br>
 
-            <input type = "submit" value = "Change Password">
+            <input id = "button" type = "submit" value = "Change Password">
         </form>
 
         <h3>Delete Account</h3>
-        <form action = "{{url_for('delete_account')}}" method = "post">
-            <input type = "submit" value = "Delete Account">
+        <form action = "{{url_for('change_account')}}" method = "get">
+            <input type = "hidden" name = "delete" value = "yes">
+            <input id = "delete_button" type = "submit" value = "Delete Account">
         </form>
+
+        {% if delete == "yes" %}
+            <form action = "{{url_for('delete_account')}}" method = "post">
+                <label>Warning! You are about to delete your account.</label>
+                <br>
+                <label>If you proceeed, you will lose all of your contacts' information.</label>
+                <br>
+                <label>Are you sure you want to delete your account?</label>
+                <br>
+
+                <input id = "yes_or_no" type = "submit" value = "Yes">
+            </form>
+
+            <form action = "{{url_for('change_account')}}" method = "get">
+                <input id = "yes_or_no" type = "submit" value = "No">
+            </form>
+        {% endif %}
     </body>
 </html>

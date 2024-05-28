@@ -7,26 +7,28 @@
     </head>
 
     <body>
-        <h2>Welcome to PhoneBook! Please login or create an account.</h2>
+        <h2>Welcome to the QCSS Health PhoneBook! Please login or create an account.</h2>
+        
+        <div class = "form_style">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p>{{message}}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        
+            <form action = "{{url_for('check_credentials')}}" method = "post" enctype = "multipart/form-data">
+                <label id = "username_password_label">Username</label>
+                <input type = "text" id = "user_entry" name = "username" required>
+                <br>
+                <label id = "username_password_label">Password</label>
+                <input type = "password" id = "user_entry" name = "password" required>
+                <br>
+                <input id = "login_button" type = "submit" value = "Login">
+            </form>
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <p>{{message}}</p>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form action = "{{url_for('check_credentials')}}" method = "post" enctype = "multipart/form-data">
-            <label>Username</label>
-            <input type = "text" name = "username" required>
-            <br>
-            <label>Password</label>
-            <input type = "password" name = "password" required>
-            <br>
-            <input type = "submit" value = "Login">
-        </form>
-
-        <a href = "{{url_for('create_account_page')}}">Create Account</a>
+            <a href = "{{url_for('create_account_page')}}">Create Account</a>
+        </div>
     </body>
 </html>

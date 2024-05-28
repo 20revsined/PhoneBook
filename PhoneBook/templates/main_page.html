@@ -7,8 +7,9 @@
     </head>
 
     <body>
-        <h2>Welcome, {{logged_in_user}}!</h2>
+        <h2>Welcome, {{first_name}} {{last_name}}!</h2>
         <a id = "edit_account" href = "{{url_for('change_account')}}">Edit Account</a>
+        <br>
         <a id = "logout" href = "{{url_for('logout')}}">Logout</a>
 
         {% with messages = get_flashed_messages() %}
@@ -21,23 +22,15 @@
         
         <p>What would you like to do?</p>
         <form action = "{{url_for('operation')}}" method = "post" enctype = "multipart/form-data">
-            <label>Create a Contact</label>
             <input type = "radio" id = "option1" name = "selection" value = "create" required>
+            <label>Create a Contact</label>
             <br>
 
-            <label>Update a Contact</label>
-            <input type = "radio" id = "option2" name = "selection" value = "update" required>
-            <br>
-
-            <label>Delete a Contact</label>
-            <input type = "radio" id = "option3" name = "selection" value = "delete" required>
-            <br>
-
+            <input type = "radio" id = "option2" name = "selection" value = "view" required>
             <label>View Contacts</label>
-            <input type = "radio" id = "option4" name = "selection" value = "view" required>
             <br>
 
-            <input type = "submit" value = "Go">
+            <input id = "go_button" type = "submit" value = "Go">
         </form>
     </body>
 </html>

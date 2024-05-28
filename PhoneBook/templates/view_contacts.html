@@ -8,25 +8,60 @@
 
     <body>
         <form action = "{{url_for('main_page')}}" action = "get">
-            <input type = "Submit" value = "Back">
+            <input id = "back" type = "Submit" value = "Back">
         </form>
         
         {% if num_contacts == 0 %}
-            <p>No contacts to display.</p>
+            <h2>No contacts to display.</h2>
         {% else %}
-            <h2>List of Contacts</h2>
+            <h2>{{first_name}} {{last_name}}'s Contacts</h2>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <p>{{message}}</p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
             {% for contact in contacts %}
-            <img src="{{url_for('return_profile_picture', filename = contact['profile_picture'])}}" alt="contact profile picture">
+                <img src="{{url_for('return_profile_picture', filename = contact['profile_picture'])}}" alt="contact profile picture">
                 <p>First Name: {{contact["first_name"]}}</p>
                 <p>Last Name: {{contact["last_name"]}}</p>
                 <p>Phone Number: {{contact["phone_number"]}}</p>
                 <p>Email Address: {{contact["email_address"]}}</p>
                 <p>Home Address: {{contact["home_address"]}}</p>
+
+                <form action = "{{url_for('update_contact_page')}}" method = "get">
+                    <input type = "hidden" name = "id" value = "{{contact['id']}}">
+                    <input type = "submit" value = "Modify">
+                </form>
+
+                <form action = "{{url_for('view_contacts')}}" method = "get">
+                    <input type = "hidden" name = "id" value = "{{contact['id']}}">
+                    <input type = "submit" value = "Delete Contact">
+                </form>
+
+                {% if id == contact["id"] %}
+                    <form action = "{{url_for('delete_contact')}}" method = "post">
+                        <label>Are you sure?</label>
+                        <br>
+
+                        <input type = "hidden" name = "id" value = "{{contact['id']}}">
+                        <input id = "yes_or_no" type = "submit" value = "Yes">
+                    </form>
+
+                    <form action = "{{url_for('view_contacts')}}" method = "get">
+                        <input id = "yes_or_no" type = "submit" value = "No">
+                    </form>
+                {% endif %}
+
+                <br>
             {% endfor %}
 
+            <br>
             <form action = "{{url_for('main_page')}}" action = "get">
-                <input type = "Submit" value = "Done">
+                <input id = "done" type = "Submit" value = "Done">
             </form>
         {% endif %}
     </body>
