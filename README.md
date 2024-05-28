@@ -16,19 +16,20 @@ since you will be using it for the setup of this app.
 1. Clone this repository by typing `git clone git@github.com:20revsined/PhoneBook.git` (using SSH)
 or `git clone https://github.com/20revsined/PhoneBook.git` (using the web URL) on your command line.
 If you prefer the GitHub CLI, using the following command: `gh repo clone 20revsined/PhoneBook`.
+After cloning, go to the PhoneBook directory by typing `cd PhoneBook` if you aren't already there.
 
-2. After opening the files in an IDE, run the following command on your command line: `chmod +x bin/phonebook_install`, which will make the phonebook_install
+3. After opening the files in an IDE, run the following command on your command line: `chmod +x bin/phonebook_install`, which will make the phonebook_install
 script executable. This will allow you to run this script, which will install the necessary dependencies for this project.
 If you don't have permission to run this command, run `sudo chmod +x bin/phonebook_install`.
 
-3. Then, run the following command, `./bin/phonebook_install`, which will run the `phonebook_install` shell script.
+4. Then, run the following command, `./bin/phonebook_install`, which will run the `phonebook_install` shell script.
 If you run `python3 --version`, and your version is less than 3.10, see lines 7 and 8 in `phonebook_install` for a
 workaround.
 
-4. After installing of the necessary dependencies and the app itself, enter the virtual environment by typing:
+5. After installing of the necessary dependencies and the app itself, enter the virtual environment by typing:
 `source phonebook/env/activate`. You can leave the environment at any time by typing `deactivate` in your command line.
 
-5. To run the app, run the following command: `./bin/phonebook_run`. To stop running the app, hit control + C in
+6. To run the app, run the following command: `./bin/phonebook_run`. To stop running the app, hit control + C in
 your command line. Make sure to allow incoming connections if prompted by your computer.
 To use the app, go to your favorite web browser and type the following for the URL: `localhost:8000`.
 
