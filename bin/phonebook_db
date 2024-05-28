@@ -25,18 +25,19 @@ case $1 in
     
     else
         sqlite3 var/phonebook.sqlite3 < sql/schema.sql
+        sqlite3 var/phonebook.sqlite3 < sql/sample_data.sql
         mkdir -p var/uploads
     fi
     ;;
 
   "delete")
     rm -rf var/phonebook.sqlite3 var/uploads
-    mkdir -p var/uploads
     ;;
 
   "reset")
     rm -rf var/phonebook.sqlite3 var/uploads
     sqlite3 var/phonebook.sqlite3 < sql/schema.sql
+    sqlite3 var/phonebook.sqlite3 < sql/sample_data.sql
     mkdir -p var/uploads
     ;;
   *)
