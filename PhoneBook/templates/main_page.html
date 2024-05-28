@@ -2,13 +2,13 @@
 <html>
     <head>
         <title>Contacts Overview</title>
-        <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "icon" href = "{{url_for('static', filename = 'images/phonebook_image.png')}}">
         <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/main_page_style.css')}}">
     </head>
 
     <body>
         <h2>Welcome, {{first_name}} {{last_name}}!</h2>
-        <a id = "edit_account" href = "{{url_for('change_account')}}">Edit Account</a>
+        <a id = "edit_account" href = "{{url_for('change_account', previous_page = previous_page)}}">Edit Account</a>
         <br>
         <a id = "logout" href = "{{url_for('logout')}}">Logout</a>
 
