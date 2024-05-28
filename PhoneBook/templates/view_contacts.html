@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Contacts List</title>
-        <link rel = "icon" href = "{{url_for('return_profile_picture', filename = 'phonebook_icon.png')}}">
+        <link rel = "icon" href = "{{url_for('static', filename = 'images/phonebook_image.png')}}">
         <link rel = "stylesheet" href = "{{url_for('static', filename = 'styles/view_contacts_style.css')}}">
     </head>
 
@@ -10,6 +10,11 @@
         <form action = "{{url_for('main_page')}}" action = "get">
             <input id = "back" type = "Submit" value = "Back">
         </form>
+
+        <a id = "edit_account" href = "{{url_for('change_account', previous_page = previous_page)}}">Edit Account</a>
+        <br>
+        <br>
+        <a id = "logout" href = "{{url_for('logout')}}">Logout</a>
         
         {% if num_contacts == 0 %}
             <h2>No contacts to display.</h2>
@@ -24,16 +29,50 @@
                 {% endif %}
             {% endwith %}
 
-            {% for contact in contacts %}
-                <img src="{{url_for('return_profile_picture', filename = contact['profile_picture'])}}" alt="contact profile picture">
-                <p>First Name: {{contact["first_name"]}}</p>
-                <p>Last Name: {{contact["last_name"]}}</p>
-                <p>Phone Number: {{contact["phone_number"]}}</p>
-                <p>Email Address: {{contact["email_address"]}}</p>
-                <p>Home Address: {{contact["home_address"]}}</p>
+            <form action = "{{url_for('view_contacts')}}" method = "get">
+                <input id = "delete" type = "submit" value = "Delete All Contacts">
+                <input type = "hidden" name = "delete_everything" value = "delete_all_contacts">
+            </form>
 
-                <form action = "{{url_for('update_contact_page')}}" method = "get">
-                    <input type = "hidden" name = "id" value = "{{contact['id']}}">
+            <br>
+
+            {% if delete_everything == "delete_all_contacts" %}
+                <form action = "{{url_for('delete_contact')}}" method = "post">
+                    <label>Are you sure you want to delete all contacts?</label>
+                    <br>
+                    <input type = "submit" value = "Yes">
+                    <input type = "hidden" name = "confirm_yes" value = "yes">
+                </form>
+
+                <form action = "{{url_for('view_contacts')}}" method = "get">
+                    <input type = "submit" value = "No">
+                </form>
+            {% endif %}
+
+            {% for contact in contacts %}
+                {% if contact["profile_picture"] != "" %}
+                    <img src="{{url_for('return_profile_picture', filename = contact['profile_picture'])}}" alt="contact profile picture">
+                {% endif %}
+
+                {% if contact["first_name"] != "" %}
+                    <p>First Name: {{contact["first_name"]}}</p>
+                {% endif %}
+
+                <p>Last Name: {{contact["last_name"]}}</p>
+
+                {% if contact["phone_number"] != "" %}
+                    <p>Phone Number: {{contact["phone_number"]}}</p>
+                {% endif %}
+
+                {% if contact["email_address"] != "" %}
+                    <p>Email Address: {{contact["email_address"]}}</p>
+                {% endif %}
+
+                {% if contact["home_address"] != "" %}
+                    <p>Home Address: {{contact["home_address"]}}</p>
+                {% endif %}
+
+                <form action = "{{url_for('update_contact_page', id = contact['id'])}}" method = "get">
                     <input type = "submit" value = "Modify">
                 </form>
 
