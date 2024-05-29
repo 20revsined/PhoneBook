@@ -10,7 +10,6 @@ usage() {
   echo "Usage: $0 (create|delete|reset)"
 }
 
-#check if directory already exists
 if [ $# -ne 1 ]; then
   usage
   exit 1
