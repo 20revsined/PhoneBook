@@ -11,7 +11,7 @@ import os
 
 def save_file(fileobj, filename):
     """
-    Generates a unique filename to save a user's profile picture in the database.
+    Generates a unique filename to save a contact's profile picture in the database.
     """
 
     stem = uuid.uuid4().hex
